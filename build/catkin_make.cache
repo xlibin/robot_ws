@@ -1,0 +1,2 @@
+robot_bringup:robot_description:rplidar_ros
+-G CodeBlocks - Unix Makefiles -DCMAKE_BUILD_TYPE=Debug -DCATKIN_DEVEL_PREFIX=/home/trobot/robot_ws/devel -DCMAKE_INSTALL_PREFIX=/home/trobot/robot_ws/install
