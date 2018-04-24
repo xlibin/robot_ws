@@ -1,0 +1,15 @@
+(cl:defpackage people_msgs-msg
+  (:use )
+  (:export
+   "<PERSONSTAMPED>"
+   "PERSONSTAMPED"
+   "<POSITIONMEASUREMENT>"
+   "POSITIONMEASUREMENT"
+   "<PEOPLE>"
+   "PEOPLE"
+   "<PERSON>"
+   "PERSON"
+   "<POSITIONMEASUREMENTARRAY>"
+   "POSITIONMEASUREMENTARRAY"
+  ))
+

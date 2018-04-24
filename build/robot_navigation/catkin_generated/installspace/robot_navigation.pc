@@ -1,0 +1,8 @@
+prefix=/home/trobot/robot_ws/install
+
+Name: robot_navigation
+Description: Description of robot_navigation
+Version: 0.0.0
+Cflags: 
+Libs: -L/home/trobot/robot_ws/install/lib 
+Requires: 

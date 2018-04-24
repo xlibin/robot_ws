@@ -1,0 +1,8 @@
+prefix=/home/trobot/robot_ws/install
+
+Name: catkinize_this
+Description: Description of catkinize_this
+Version: 0.2.4
+Cflags: 
+Libs: -L/home/trobot/robot_ws/install/lib 
+Requires: 

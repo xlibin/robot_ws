@@ -1,0 +1,8 @@
+prefix=/home/trobot/robot_ws/devel
+
+Name: people_msgs
+Description: Description of people_msgs
+Version: 1.0.10
+Cflags: -I/home/trobot/robot_ws/devel/include
+Libs: -L/home/trobot/robot_ws/devel/lib 
+Requires: message_runtime geometry_msgs std_msgs

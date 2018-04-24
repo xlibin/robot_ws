@@ -1,0 +1,8 @@
+prefix=/home/trobot/robot_ws/install
+
+Name: people_tracking_filter
+Description: Description of people_tracking_filter
+Version: 1.0.10
+Cflags: -I/home/trobot/robot_ws/install/include
+Libs: -L/home/trobot/robot_ws/install/lib -lpeople_tracking_filter
+Requires: sensor_msgs std_msgs geometry_msgs people_msgs

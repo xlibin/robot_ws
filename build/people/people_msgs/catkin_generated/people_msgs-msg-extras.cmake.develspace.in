@@ -1,0 +1,2 @@
+set(people_msgs_MESSAGE_FILES "/home/trobot/robot_ws/src/people/people_msgs/msg/People.msg;/home/trobot/robot_ws/src/people/people_msgs/msg/Person.msg;/home/trobot/robot_ws/src/people/people_msgs/msg/PersonStamped.msg;/home/trobot/robot_ws/src/people/people_msgs/msg/PositionMeasurementArray.msg;/home/trobot/robot_ws/src/people/people_msgs/msg/PositionMeasurement.msg")
+set(people_msgs_SERVICE_FILES "")

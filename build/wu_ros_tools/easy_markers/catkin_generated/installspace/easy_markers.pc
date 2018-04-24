@@ -1,0 +1,8 @@
+prefix=/home/trobot/robot_ws/install
+
+Name: easy_markers
+Description: Description of easy_markers
+Version: 0.2.4
+Cflags: 
+Libs: -L/home/trobot/robot_ws/install/lib 
+Requires: geometry_msgs visualization_msgs

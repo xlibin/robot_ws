@@ -1,0 +1,6 @@
+inflation_layer:
+   inflation_radius: 0.3
+
+TrajectoryPlannerROS:
+    max_vel_x: 1.0
+    min_vex_x: 0.5

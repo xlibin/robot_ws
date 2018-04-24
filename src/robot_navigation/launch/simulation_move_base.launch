@@ -1,0 +1,18 @@
+<launch>
+
+  <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen" clear_params="true">
+	<!-- <param name="base_global_planner" value="global_planner/GlobalPlanner" /> -->
+    	<rosparam file="$(find robot_navigation)/config/simulation/costmap_common_params.yaml" command="load" ns="global_costmap" />
+    	<rosparam file="$(find robot_navigation)/config/simulation/costmap_common_params.yaml" command="load" ns="local_costmap" />
+   	<rosparam file="$(find robot_navigation)/config/simulation/local_costmap_params.yaml" command="load" />
+    	<rosparam file="$(find robot_navigation)/config/simulation/global_costmap_params.yaml" command="load" />
+
+   	<rosparam file="$(find robot_navigation)/config/simulation/base_local_planner_params.yaml" command="load" />
+	<!--rosparam file="$(find robot_navigation)config/simulation/dwa_local_planner_params.yaml" command="load" /-->
+
+	<param name="base_global_planner" value="global_planner/GlobalPlanner"/>
+	<!--param name="base_local_planner" value="dwa_local_planner/DWAPlannerROS" /-->	
+	<rosparam file = "$(find robot_navigation)/config/simulation/nav_new_params.yaml" command = "load"/>
+  </node>
+  
+</launch>

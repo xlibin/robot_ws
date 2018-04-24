@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 4.4.1, 2018-04-10T21:35:20. -->
+<!-- Written by QtCreator 4.4.1, 2018-04-24T10:48:45. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
-  <value type="QByteArray">{03e3c2ac-9ba2-41a3-a972-803693b4fb76}</value>
+  <value type="QByteArray">{8ee5a3a1-37e5-4a59-95a2-9521d05a4b87}</value>
  </data>
  <data>
   <variable>ProjectExplorer.Project.ActiveTarget</variable>
@@ -61,10 +61,10 @@
   <valuemap type="QVariantMap">
    <value type="QString" key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName">Desktop</value>
    <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName">Desktop</value>
-   <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">{3609e342-90ab-47cc-8894-43bf11c1d41d}</value>
+   <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">{2c66c766-04ca-473d-90df-7252da38396b}</value>
    <value type="int" key="ProjectExplorer.Target.ActiveBuildConfiguration">0</value>
    <value type="int" key="ProjectExplorer.Target.ActiveDeployConfiguration">0</value>
-   <value type="int" key="ProjectExplorer.Target.ActiveRunConfiguration">1</value>
+   <value type="int" key="ProjectExplorer.Target.ActiveRunConfiguration">0</value>
    <valuemap type="QVariantMap" key="ProjectExplorer.Target.BuildConfiguration.0">
     <value type="QString" key="ProjectExplorer.BuildConfiguration.BuildDirectory"></value>
     <valuemap type="QVariantMap" key="ProjectExplorer.BuildConfiguration.BuildStepList.0">
@@ -75,7 +75,7 @@
       <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">ROSProjectManager.ROSCatkinMakeStep</value>
       <value type="QString" key="ROSProjectManager.ROSCatkinMakeStep.CMakeArguments"></value>
       <value type="QString" key="ROSProjectManager.ROSCatkinMakeStep.CatkinMakeArguments"></value>
-      <value type="QString" key="ROSProjectManager.ROSCatkinMakeStep.MakeArguments"></value>
+      <value type="QString" key="ROSProjectManager.ROSCatkinMakeStep.MakeArguments">-j4</value>
       <value type="int" key="ROSProjectManager.ROSCatkinMakeStep.Target">0</value>
      </valuemap>
      <value type="int" key="ProjectExplorer.BuildStepList.StepsCount">1</value>
@@ -102,6 +102,7 @@
     <value type="int" key="ProjectExplorer.BuildConfiguration.BuildStepListCount">2</value>
     <value type="bool" key="ProjectExplorer.BuildConfiguration.ClearSystemEnvironment">false</value>
     <valuelist type="QVariantList" key="ProjectExplorer.BuildConfiguration.UserEnvironmentChanges">
+     <value type="QString">MAKEFLAGS</value>
      <value type="QString">PATH=/opt/ros/indigo/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games</value>
      <value type="QString">PWD=/home/trobot/robot_ws</value>
      <value type="QString">QTDIR</value>
@@ -342,7 +343,7 @@
      <value type="int">14</value>
     </valuelist>
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName"></value>
-    <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName">rplidar</value>
+    <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName">SLAM</value>
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">ROSProjectManager.ROSRunConfiguration</value>
     <valuemap type="QVariantMap" key="ROSProjectManager.ROSRunConfiguration.RunStepList">
      <value type="QString" key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName">Run</value>
@@ -356,9 +357,9 @@
       <value type="QString" key="ROSProjectManager.ROSGenericStep.Arguments"></value>
       <value type="QString" key="ROSProjectManager.ROSGenericStep.Command">debug</value>
       <value type="bool" key="ROSProjectManager.ROSGenericStep.DebugContinueOnAttach">true</value>
-      <value type="QString" key="ROSProjectManager.ROSGenericStep.Package">rplidar_ros</value>
-      <value type="QString" key="ROSProjectManager.ROSGenericStep.Target">rplidarNode</value>
-      <value type="QString" key="ROSProjectManager.ROSGenericStep.TargetPath">/home/trobot/robot_ws/devel/lib/rplidar_ros/rplidarNode</value>
+      <value type="QString" key="ROSProjectManager.ROSGenericStep.Package">gmapping</value>
+      <value type="QString" key="ROSProjectManager.ROSGenericStep.Target">slam_gmapping</value>
+      <value type="QString" key="ROSProjectManager.ROSGenericStep.TargetPath">/home/trobot/robot_ws/devel/lib/gmapping/slam_gmapping</value>
      </valuemap>
      <valuemap type="QVariantMap" key="ProjectExplorer.RunStepList.Step.1">
       <value type="QString" key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName"></value>
@@ -368,89 +369,9 @@
       <value type="QString" key="ROSProjectManager.ROSGenericStep.Arguments"></value>
       <value type="QString" key="ROSProjectManager.ROSGenericStep.Command">roslaunch</value>
       <value type="bool" key="ROSProjectManager.ROSGenericStep.DebugContinueOnAttach">false</value>
-      <value type="QString" key="ROSProjectManager.ROSGenericStep.Package">rplidar_ros</value>
-      <value type="QString" key="ROSProjectManager.ROSGenericStep.Target">view_rplidar.launch</value>
-      <value type="QString" key="ROSProjectManager.ROSGenericStep.TargetPath">/home/trobot/robot_ws/src/rplidar_ros/launch/view_rplidar.launch</value>
-     </valuemap>
-     <value type="int" key="ProjectExplorer.RunStepList.StepsCount">2</value>
-    </valuemap>
-    <value type="uint" key="RunConfiguration.QmlDebugServerPort">3768</value>
-    <value type="bool" key="RunConfiguration.UseCppDebugger">false</value>
-    <value type="bool" key="RunConfiguration.UseCppDebuggerAuto">true</value>
-    <value type="bool" key="RunConfiguration.UseMultiProcess">false</value>
-    <value type="bool" key="RunConfiguration.UseQmlDebugger">false</value>
-    <value type="bool" key="RunConfiguration.UseQmlDebuggerAuto">true</value>
-   </valuemap>
-   <valuemap type="QVariantMap" key="ProjectExplorer.Target.RunConfiguration.1">
-    <value type="bool" key="Analyzer.QmlProfiler.AggregateTraces">false</value>
-    <value type="bool" key="Analyzer.QmlProfiler.FlushEnabled">false</value>
-    <value type="uint" key="Analyzer.QmlProfiler.FlushInterval">1000</value>
-    <value type="QString" key="Analyzer.QmlProfiler.LastTraceFile"></value>
-    <value type="bool" key="Analyzer.QmlProfiler.Settings.UseGlobalSettings">true</value>
-    <valuelist type="QVariantList" key="Analyzer.Valgrind.AddedSuppressionFiles"/>
-    <value type="bool" key="Analyzer.Valgrind.Callgrind.CollectBusEvents">false</value>
-    <value type="bool" key="Analyzer.Valgrind.Callgrind.CollectSystime">false</value>
-    <value type="bool" key="Analyzer.Valgrind.Callgrind.EnableBranchSim">false</value>
-    <value type="bool" key="Analyzer.Valgrind.Callgrind.EnableCacheSim">false</value>
-    <value type="bool" key="Analyzer.Valgrind.Callgrind.EnableEventToolTips">true</value>
-    <value type="double" key="Analyzer.Valgrind.Callgrind.MinimumCostRatio">0.01</value>
-    <value type="double" key="Analyzer.Valgrind.Callgrind.VisualisationMinimumCostRatio">10</value>
-    <value type="bool" key="Analyzer.Valgrind.FilterExternalIssues">true</value>
-    <value type="int" key="Analyzer.Valgrind.LeakCheckOnFinish">1</value>
-    <value type="int" key="Analyzer.Valgrind.NumCallers">25</value>
-    <valuelist type="QVariantList" key="Analyzer.Valgrind.RemovedSuppressionFiles"/>
-    <value type="int" key="Analyzer.Valgrind.SelfModifyingCodeDetection">1</value>
-    <value type="bool" key="Analyzer.Valgrind.Settings.UseGlobalSettings">true</value>
-    <value type="bool" key="Analyzer.Valgrind.ShowReachable">false</value>
-    <value type="bool" key="Analyzer.Valgrind.TrackOrigins">true</value>
-    <value type="QString" key="Analyzer.Valgrind.ValgrindExecutable">valgrind</value>
-    <valuelist type="QVariantList" key="Analyzer.Valgrind.VisibleErrorKinds">
-     <value type="int">0</value>
-     <value type="int">1</value>
-     <value type="int">2</value>
-     <value type="int">3</value>
-     <value type="int">4</value>
-     <value type="int">5</value>
-     <value type="int">6</value>
-     <value type="int">7</value>
-     <value type="int">8</value>
-     <value type="int">9</value>
-     <value type="int">10</value>
-     <value type="int">11</value>
-     <value type="int">12</value>
-     <value type="int">13</value>
-     <value type="int">14</value>
-    </valuelist>
-    <value type="QString" key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName"></value>
-    <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName">model&amp;laseScan</value>
-    <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">ROSProjectManager.ROSRunConfiguration</value>
-    <valuemap type="QVariantMap" key="ROSProjectManager.ROSRunConfiguration.RunStepList">
-     <value type="QString" key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName">Run</value>
-     <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName"></value>
-     <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">ROSProjectManager.ROSRunConfiguration.RunStepList</value>
-     <valuemap type="QVariantMap" key="ProjectExplorer.RunStepList.Step.0">
-      <value type="QString" key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName"></value>
-      <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName"></value>
-      <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">ROSProjectManager.ROSAttachToNode</value>
-      <value type="bool" key="ProjectExplorer.RunStep.Enabled">true</value>
-      <value type="QString" key="ROSProjectManager.ROSGenericStep.Arguments"></value>
-      <value type="QString" key="ROSProjectManager.ROSGenericStep.Command">debug</value>
-      <value type="bool" key="ROSProjectManager.ROSGenericStep.DebugContinueOnAttach">true</value>
-      <value type="QString" key="ROSProjectManager.ROSGenericStep.Package">rplidar_ros</value>
-      <value type="QString" key="ROSProjectManager.ROSGenericStep.Target">rplidarNode</value>
-      <value type="QString" key="ROSProjectManager.ROSGenericStep.TargetPath">/home/trobot/robot_ws/devel/lib/rplidar_ros/rplidarNode</value>
-     </valuemap>
-     <valuemap type="QVariantMap" key="ProjectExplorer.RunStepList.Step.1">
-      <value type="QString" key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName"></value>
-      <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName"></value>
-      <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">ROSProjectManager.ROSLaunchStep</value>
-      <value type="bool" key="ProjectExplorer.RunStep.Enabled">true</value>
-      <value type="QString" key="ROSProjectManager.ROSGenericStep.Arguments"></value>
-      <value type="QString" key="ROSProjectManager.ROSGenericStep.Command">roslaunch</value>
-      <value type="bool" key="ROSProjectManager.ROSGenericStep.DebugContinueOnAttach">false</value>
-      <value type="QString" key="ROSProjectManager.ROSGenericStep.Package">robot_description</value>
-      <value type="QString" key="ROSProjectManager.ROSGenericStep.Target">robot_description.launch</value>
-      <value type="QString" key="ROSProjectManager.ROSGenericStep.TargetPath">/home/trobot/robot_ws/src/robot_description/launch/robot_description.launch</value>
+      <value type="QString" key="ROSProjectManager.ROSGenericStep.Package">robot_navigation</value>
+      <value type="QString" key="ROSProjectManager.ROSGenericStep.Target">gmapping_demo.launch</value>
+      <value type="QString" key="ROSProjectManager.ROSGenericStep.TargetPath">/home/trobot/robot_ws/src/robot_navigation/launch/gmapping_demo.launch</value>
      </valuemap>
      <valuemap type="QVariantMap" key="ProjectExplorer.RunStepList.Step.2">
       <value type="QString" key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName"></value>
@@ -460,9 +381,9 @@
       <value type="QString" key="ROSProjectManager.ROSGenericStep.Arguments"></value>
       <value type="QString" key="ROSProjectManager.ROSGenericStep.Command">roslaunch</value>
       <value type="bool" key="ROSProjectManager.ROSGenericStep.DebugContinueOnAttach">false</value>
-      <value type="QString" key="ROSProjectManager.ROSGenericStep.Package">rplidar_ros</value>
-      <value type="QString" key="ROSProjectManager.ROSGenericStep.Target">view_rplidar.launch</value>
-      <value type="QString" key="ROSProjectManager.ROSGenericStep.TargetPath">/home/trobot/robot_ws/src/rplidar_ros/launch/view_rplidar.launch</value>
+      <value type="QString" key="ROSProjectManager.ROSGenericStep.Package">robot_navigation</value>
+      <value type="QString" key="ROSProjectManager.ROSGenericStep.Target">view_navigation.launch</value>
+      <value type="QString" key="ROSProjectManager.ROSGenericStep.TargetPath">/home/trobot/robot_ws/src/robot_navigation/launch/view_navigation.launch</value>
      </valuemap>
      <value type="int" key="ProjectExplorer.RunStepList.StepsCount">3</value>
     </valuemap>
@@ -473,7 +394,7 @@
     <value type="bool" key="RunConfiguration.UseQmlDebugger">false</value>
     <value type="bool" key="RunConfiguration.UseQmlDebuggerAuto">true</value>
    </valuemap>
-   <value type="int" key="ProjectExplorer.Target.RunConfigurationCount">2</value>
+   <value type="int" key="ProjectExplorer.Target.RunConfigurationCount">1</value>
   </valuemap>
  </data>
  <data>
