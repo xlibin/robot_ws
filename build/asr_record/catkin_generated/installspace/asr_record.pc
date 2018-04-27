@@ -1,8 +1,0 @@
-prefix=/home/trobot/robot_ws/install
-
-Name: asr_record
-Description: Description of asr_record
-Version: 0.0.0
-Cflags: -I/home/trobot/robot_ws/install/include
-Libs: -L/home/trobot/robot_ws/install/lib 
-Requires: message_runtime

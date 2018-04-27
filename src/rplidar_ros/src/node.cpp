@@ -71,7 +71,7 @@ void publish_scan(ros::Publisher *pub,
     scan_msg.scan_time = scan_time;
     scan_msg.time_increment = scan_time / (double)(node_count-1);
 
-    scan_msg.range_min = 0.15;
+    scan_msg.range_min = 0.19;
     scan_msg.range_max = 6.;
 
     scan_msg.ranges.resize(node_count);

@@ -1,5 +1,0 @@
-<launch>
-   <node name="arduino" pkg="can_bringup" type="can_driver.py" output="screen">
-      <rosparam file="$(find can_bringup)/config/can_robot_params.yaml" command="load" />
-   </node>
-</launch>

@@ -1,8 +1,0 @@
-prefix=/home/trobot/robot_ws/install
-
-Name: leg_detector
-Description: Description of leg_detector
-Version: 1.0.10
-Cflags: -I/home/trobot/robot_ws/install/include
-Libs: -L/home/trobot/robot_ws/install/lib 
-Requires: people_msgs sensor_msgs std_msgs geometry_msgs visualization_msgs

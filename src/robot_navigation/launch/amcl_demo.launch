@@ -1,18 +1,19 @@
 <launch>
-   <node name="arduino" pkg="robot_bringup" type="robot_driver.py" output="screen">
+   <!-- <node name="arduino" pkg="robot_bringup" type="robot_driver.py" output="screen">
       <rosparam file="$(find robot_bringup)/config/robot_params.yaml" command="load" />
-   </node>
+   </node> -->
+   <include file = "$(find robot_bringup)/launch/minimal.launch"/>
 
-  <node name="rplidarNode"          pkg="rplidar_ros"  type="rplidarNode" output="screen">
+  <!-- <node name="rplidarNode"          pkg="rplidar_ros"  type="rplidarNode" output="screen">
   <param name="serial_port"         type="string" value="/dev/rplidar"/>  
   <param name="serial_baudrate"     type="int"    value="230400"/>
   <param name="frame_id"            type="string" value="laser_frame"/>
   <param name="inverted"            type="bool"   value="false"/>
   <param name="angle_compensate"    type="bool"   value="true"/>
-  </node>
+  </node> -->
+  <include file = "$(find rplidar_ros)/launch/rplidar.launch"/>
  <include file="$(find robot_description)/launch/robot_description.launch"/>
-  <node pkg="tf" type="static_transform_publisher" name="base_link_to_laser4" 
-    args="0.0 0.0 0.0 0.0 3.1415926 0.0 /base_link /laser_frame 40" />
+  
   <!-- Map server -->
   <arg name="map" default="$(find robot_navigation)/maps/blank_map.yaml"/>
   <node name="map_server" pkg="map_server" type="map_server" args="$(arg map)" />
