@@ -2,7 +2,6 @@
 	<node pkg= "robot_bringup" name = "arduino" type = "robot_driver.py" output = "screen">
 		<rosparam file = "$(find robot_bringup)/config/robot_params.yaml" command = "load" />
 	</node>
-  <!-- <include file = "$(find robot_bringup)/launch/minimal.launch"/> -->
 
   	<node pkg = "rplidar_ros" name = "rplidarNode"  type = "rplidarNode"  output = "screen">
   		<param name="serial_port"		type="string"	value="/dev/rplidar"/>  
@@ -11,16 +10,17 @@
   		<param name="inverted" 		type="bool"	value="false"/>
   		<param name="angle_compensate" 	type="bool"	value="true"/>
   	</node>
-    <!-- <include file = "$(find rplidar_ros)/launch/rplidar.launch"/> -->
 
 	<include file = "$(find robot_description)/launch/robot_description.launch" />
 
-  <node pkg = "tf" type = "static_transform_publisher" name = "base_link_to_laser4" 
-    args = "0.0 0.0 0.2 -2.37 -3.1415926 0.0 /base_link /laser_frame 40" />
+
+	<node pkg = "tf" type = "static_transform_publisher" name = "base_link_to_laser4" 
+		args = "0.0 0.0 0.2 -2.37 -3.1415926 0.0 /base_link /laser_frame 40" />
+
 
 
 	<!-- map server -->
-	<arg name = "map" default = "$(find robot_navigation)/maps/navigation.yaml" />
+	<arg name = "map" default = "$(find robot_navigation)/maps/blank_map.yaml" />
 	<node pkg = "map_server" name = "map_server" type = "map_server" args = "$(arg map)" />
 
 
@@ -34,6 +34,7 @@
   		<arg name = "initial_pose_a" value = "$(arg initial_pose_a)" />
   	</include>
 
-  	<include file = "$(find robot_navigation)/launch/move_base_global_dwa.launch" />
+  	<include file = "$(find robot_navigation)/launch/move_base_follow.launch" />
 
+        <include file = "$(find robot_navigation)/launch/leg_detector.launch" /> 
 </launch>

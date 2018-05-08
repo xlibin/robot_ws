@@ -67,3 +67,10 @@ install(FILES config/trained_leg_detector.yaml
 install(DIRECTORY launch/
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/launch
 )
+
+#####
+add_executable(my_people_detector src/my_people_detector.cpp)
+target_link_libraries(my_people_detector ${catkin_LIBRARIES})
+add_executable(people_follow src/people_follow.cpp)
+target_link_libraries(people_follow ${catkin_LIBRARIES})
+

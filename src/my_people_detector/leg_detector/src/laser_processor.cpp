@@ -222,6 +222,25 @@ ScanProcessor::removeLessThan(uint32_t num)
 }
 
 
+//my_code
+void
+ScanProcessor::removeMoreThan(uint32_t num)
+{
+  list<SampleSet*>::iterator c_iter = clusters_.begin();
+  while (c_iter != clusters_.end())
+  {
+    if ((*c_iter)->size() > num)
+    {
+      delete(*c_iter);
+      clusters_.erase(c_iter++);
+    }
+    else
+    {
+      ++c_iter;
+    }
+  }
+}
+
 void
 ScanProcessor::splitConnected(float thresh)
 {
