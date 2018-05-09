@@ -14,13 +14,15 @@
 using std :: vector;
 #include <geometry_msgs/Pose.h>
 #include <geometry_msgs/Quaternion.h>
+#include <math.h>
+
 using geometry_msgs :: Quaternion;
 using geometry_msgs :: Pose;
 
 void people_follow();
 bool compare(const people_msgs::PositionMeasurement& x, const people_msgs::PositionMeasurement& y);
 void people_follow_callback(const people_msgs::PositionMeasurementArray::ConstPtr& message);
-tf::StampedTransform get_odom();
+tf::StampedTransform get_base2map();
 
 typedef actionlib :: SimpleActionClient<move_base_msgs :: MoveBaseAction> MoveBaseClient;
 people_msgs::PositionMeasurement best_people;
@@ -48,7 +50,7 @@ void people_follow()
 
 	//get odom,get  current position of robot
 	tf::StampedTransform transform;
-	transform = get_odom();//获取机器人位置
+  transform = get_base2map();//获取机器人位置
 	//caculate distance of robot to people计算机器人与行人目标的距离
 	float delta_x = best_people.pos.x - transform.getOrigin().x();
 	float delta_y = best_people.pos.y - transform.getOrigin().y();
@@ -64,17 +66,19 @@ void people_follow()
 	}
 	/*createting MoveBaseActionGoal*/
 	move_base_msgs :: MoveBaseGoal goal;
-	goal.target_pose.header.frame_id = "odom";//base_link or map
+	goal.target_pose.header.frame_id = "map";//base_link or map
 	goal.target_pose.header.stamp = ros :: Time :: now();
-	goal.target_pose.pose.orientation.w = 1.0;
+	
 	//goal.target_pose.pose.position =  best_people.pos;//set  goal.position
 	double dist_robot_goal = dist_robot_people- 0.2;//0.2m的安全距离，导航目标与行人距离0.2m
 	if(dist_robot_people <= 0.2)
 	{
+		double yaw, pitch, roll;
 		ROS_WARN("The goal is too close to robot!");//获得无效的行人目标
 		goal.target_pose.pose.position.x = transform.getOrigin().x();
 		goal.target_pose.pose.position.y = transform.getOrigin().y();
-
+		transform.getBasis().getEulerYPR(yaw, pitch, roll);
+		goal.target_pose.pose.orientation.w = yaw;
 		//wait for the action server to come up 
 		while(! ac.waitForServer(ros :: Duration(5.0)))
 		{
@@ -90,6 +94,7 @@ void people_follow()
 //设置goal的坐标，x=(L-0.2)*dx/L，y=（L-0.2）*dy/L
 		goal.target_pose.pose.position.x = transform.getOrigin().x()+ dist_robot_goal*(delta_x/dist_robot_people);
 		goal.target_pose.pose.position.y = transform.getOrigin().y() + dist_robot_goal*(delta_y/dist_robot_people);
+		goal.target_pose.pose.orientation.w = atan2(delta_y, delta_x);
 	
 		//wait for the action server to come up 等待move_base启动
 		while(! ac.waitForServer(ros :: Duration(5.0)))
@@ -130,17 +135,7 @@ void people_follow_callback(const people_msgs::PositionMeasurementArray::ConstPt
 	people_array = message->people;//people_array用于存放行人目标阵列
 
 	  vector<people_msgs::PositionMeasurement>:: iterator iter;
-/**************************************************************************/
-//输出行人目标阵列的内容，用于调试
-  	ROS_INFO("Start to print people_array************************");
-  	for(iter=people_array.begin();iter!=people_array.end();++iter)
- 	 {
-		ROS_WARN("people_array.pos.x= %f",(*iter).pos.x);
-		ROS_WARN("people_array.pos.y= %f",(*iter).pos.y);
-		ROS_WARN("people_array.pos.z= %f",(*iter).pos.z);
-		ROS_WARN("people_array.reliability= %f",(*iter).reliability);
- 	 }
-/**************************************************************************/
+
 	/*get the best people from the people_array*/
 	sort(people_array.begin(),people_array.end(),compare);//根据reliability，对people_array进行排序，按从大到小的顺序排序
 
@@ -154,29 +149,19 @@ void people_follow_callback(const people_msgs::PositionMeasurementArray::ConstPt
  	 }
 	vector<people_msgs::PositionMeasurement> :: iterator iter1 = people_array.begin();
 	best_people = *iter1;//获得people_array的第一个元素，即reliability最大的行人目标，将其视为跟踪目标
-/********************************************/
-	//打印best_people，用于调试
-	//vector<people_msgs::PositionMeasurement> people;
-	ROS_INFO("Start to print best_people!*********");
-		ROS_WARN("best_people.pos.x= %f",best_people.pos.x);
-		ROS_WARN("best_people.pos.y= %f",best_people.pos.y);
-		ROS_WARN("best_people.pos.z= %f",best_people.pos.z);
-		ROS_WARN("best_people.reliability= %f",best_people.reliability);
-	ROS_INFO("Finishing print best_people********");
-/********************************************/
 
 	people_follow();//调用行人自动跟随函数
 }
 /********************************************/
 //获取里程计函数，用于获取机器人的实时位置，存放与transform中
-tf::StampedTransform get_odom()
+tf::StampedTransform get_base2map()
 {
 	tf::TransformListener listener;
 	tf::StampedTransform transform;
-	listener.waitForTransform("/odom", "/base_link",  ros::Time(0), ros :: Duration(3.0));
+	listener.waitForTransform("/map", "/base_link",  ros::Time(0), ros :: Duration(3.0));
 	try
 	{
-		listener.lookupTransform("/odom", "/base_link",  ros::Time(0), transform );//获取base_link到odom的坐标系变换
+		listener.lookupTransform("/map", "/base_link",  ros::Time(0), transform );//获取base_link到odom的坐标系变换
 	}
 	catch (tf::TransformException ex)
 	{

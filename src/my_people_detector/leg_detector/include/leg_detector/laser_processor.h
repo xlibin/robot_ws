@@ -149,7 +149,7 @@ public:
   ~ScanProcessor();
 
   void removeLessThan(uint32_t num);
-  void removeMoreThan(uint32_t num);/*******my_code********/
+  void removeMoreThan(uint32_t num);
 
   void splitConnected(float thresh);
 };

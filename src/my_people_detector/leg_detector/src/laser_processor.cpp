@@ -222,7 +222,6 @@ ScanProcessor::removeLessThan(uint32_t num)
 }
 
 
-//my_code
 void
 ScanProcessor::removeMoreThan(uint32_t num)
 {
@@ -240,6 +239,7 @@ ScanProcessor::removeMoreThan(uint32_t num)
     }
   }
 }
+
 
 void
 ScanProcessor::splitConnected(float thresh)
@@ -274,7 +274,7 @@ ScanProcessor::splitConnected(float thresh)
         while ((s_rest != (*c_iter)->end() &&
                 (*s_rest)->index < (*s_q)->index + expand))
         {
-          if ((*s_rest)->range - (*s_q)->range > thresh)
+          if (std::abs((*s_rest)->range - (*s_q)->range) > thresh)
           {
             break;
           }

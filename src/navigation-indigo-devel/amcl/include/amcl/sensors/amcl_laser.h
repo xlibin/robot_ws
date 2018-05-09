@@ -31,6 +31,8 @@
 
 #include "amcl_sensor.h"
 #include "../map/map.h"
+#include "ros/ros.h"
+#include "sensor_msgs/LaserScan.h"
 
 namespace amcl
 {
@@ -94,6 +96,8 @@ class AMCLLaser : public AMCLSensor
   public: void SetLaserPose(pf_vector_t& laser_pose) 
           {this->laser_pose = laser_pose;}
 
+  static void LFM2subtract_scan(ros::Publisher& pub, AMCLLaserData *data, pf_vector_t pose, const sensor_msgs::LaserScanConstPtr& laser_origin, double threshold);
+
   // Determine the probability for the given pose
   private: static double BeamModel(AMCLLaserData *data, 
                                    pf_sample_set_t* set);
@@ -148,6 +152,7 @@ class AMCLLaser : public AMCLSensor
   private: double lambda_short;
   // Threshold for outlier rejection (unused)
   private: double chi_outlier;
+
 };
 
 

@@ -233,6 +233,7 @@ class AmclNode
     ros::NodeHandle private_nh_;
     ros::Publisher pose_pub_;
     ros::Publisher particlecloud_pub_;
+    ros::Publisher leg_detector_scan_pub_;
     ros::ServiceServer global_loc_srv_;
     ros::ServiceServer nomotion_update_srv_; //to let amcl update samples without requiring motion
     ros::ServiceServer set_map_srv_;
@@ -261,6 +262,8 @@ class AmclNode
     double init_cov_[3];
     laser_model_t laser_model_type_;
     bool tf_broadcast_;
+
+    double match_map_threshold_;//use to split beams end at map's obstacle
 
     void reconfigureCB(amcl::AMCLConfig &config, uint32_t level);
 
@@ -405,6 +408,8 @@ AmclNode::AmclNode() :
   private_nh_.param("recovery_alpha_fast", alpha_fast_, 0.1);
   private_nh_.param("tf_broadcast", tf_broadcast_, true);
 
+  private_nh_.param("match_map_threshold", match_map_threshold_, 0.2);
+
   transform_tolerance_.fromSec(tmp_tol);
 
   {
@@ -421,6 +426,8 @@ AmclNode::AmclNode() :
 
   pose_pub_ = nh_.advertise<geometry_msgs::PoseWithCovarianceStamped>("amcl_pose", 2, true);
   particlecloud_pub_ = nh_.advertise<geometry_msgs::PoseArray>("particlecloud", 2, true);
+  leg_detector_scan_pub_ = nh_.advertise<sensor_msgs::LaserScan>("leg_scan", 1000);
+
   global_loc_srv_ = nh_.advertiseService("global_localization", 
 					 &AmclNode::globalLocalizationCallback,
                                          this);
@@ -1158,10 +1165,10 @@ AmclNode::laserReceived(const sensor_msgs::LaserScanConstPtr& laser_scan)
   }
 
   bool resampled = false;
+  AMCLLaserData ldata;
   // If the robot has moved, update the filter
   if(lasers_update_[laser_index])
   {
-    AMCLLaserData ldata;
     ldata.sensor = lasers_[laser_index];
     ldata.range_count = laser_scan->ranges.size();
 
@@ -1298,7 +1305,7 @@ AmclNode::laserReceived(const sensor_msgs::LaserScanConstPtr& laser_scan)
          pf_matrix_fprintf(hyps[max_weight_hyp].pf_pose_cov, stdout, "%6.3f");
          puts("");
        */
-
+      AMCLLaser::LFM2subtract_scan(leg_detector_scan_pub_, &ldata, hyps[max_weight_hyp].pf_pose_mean, laser_scan, match_map_threshold_);
       geometry_msgs::PoseWithCovarianceStamped p;
       // Fill in the header
       p.header.frame_id = global_frame_id_;

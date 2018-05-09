@@ -40,7 +40,7 @@
 using namespace laser_processor;
 using namespace std;
 
-vector<float> calcLegFeatures(SampleSet* cluster, const sensor_msgs::LaserScan& scan)/*计算leg模型*/
+vector<float> calcLegFeatures(SampleSet* cluster, const sensor_msgs::LaserScan& scan)
 {
 
   vector<float> features;
@@ -50,7 +50,6 @@ vector<float> calcLegFeatures(SampleSet* cluster, const sensor_msgs::LaserScan& 
   //  features.push_back(num_points);
 
   // Compute mean and median points for future use
-  //计算均值和中值
   float x_mean = 0.0;
   float y_mean = 0.0;
   vector<float> x_median_set;
@@ -60,16 +59,15 @@ vector<float> calcLegFeatures(SampleSet* cluster, const sensor_msgs::LaserScan& 
        i++)
 
   {
-    x_mean += ((*i)->x) / num_points;/*每个类x的均值*/
-    y_mean += ((*i)->y) / num_points;/*每个类y的均值*/
-    x_median_set.push_back((*i)->x);/*存放每个类的每一个元素的x*/
-    y_median_set.push_back((*i)->y);/*存放每个类的每一个元素的y*/
+    x_mean += ((*i)->x) / num_points;
+    y_mean += ((*i)->y) / num_points;
+    x_median_set.push_back((*i)->x);
+    y_median_set.push_back((*i)->y);
   }
 
-  std::sort(x_median_set.begin(), x_median_set.end());/*每个类的每一个元素的x的排序*/
-  std::sort(y_median_set.begin(), y_median_set.end());/*每个类的每一个元素的y的排序*/
+  std::sort(x_median_set.begin(), x_median_set.end());
+  std::sort(y_median_set.begin(), y_median_set.end());
 
-  /*求均值*/
   float x_median = 0.5 * (*(x_median_set.begin() + (num_points - 1) / 2) + * (x_median_set.begin() + num_points / 2));
   float y_median = 0.5 * (*(y_median_set.begin() + (num_points - 1) / 2) + * (y_median_set.begin() + num_points / 2));
 
@@ -84,15 +82,15 @@ vector<float> calcLegFeatures(SampleSet* cluster, const sensor_msgs::LaserScan& 
        i++)
 
   {
-    sum_std_diff += pow((*i)->x - x_mean, 2) + pow((*i)->y - y_mean, 2);/*平方差*/
-    sum_med_diff += sqrt(pow((*i)->x - x_median, 2) + pow((*i)->y - y_median, 2));/*方差*/
+    sum_std_diff += pow((*i)->x - x_mean, 2) + pow((*i)->y - y_mean, 2);
+    sum_med_diff += sqrt(pow((*i)->x - x_median, 2) + pow((*i)->y - y_median, 2));
   }
 
-  float std = sqrt(1.0 / (num_points - 1.0) * sum_std_diff);/*均方差*/
+  float std = sqrt(1.0 / (num_points - 1.0) * sum_std_diff);
   float avg_median_dev = sum_med_diff / num_points;
 
-  features.push_back(std);//
-  features.push_back(avg_median_dev);//
+  features.push_back(std);
+  features.push_back(avg_median_dev);
 
 
   // Take first at last
@@ -101,8 +99,8 @@ vector<float> calcLegFeatures(SampleSet* cluster, const sensor_msgs::LaserScan& 
   last--;
 
   // Compute Jump distance
-  int prev_ind = (*first)->index - 1;/*前一个数据*/
-  int next_ind = (*last)->index + 1;/*最后一个数据*/
+  int prev_ind = (*first)->index - 1;
+  int next_ind = (*last)->index + 1;
 
   float prev_jump = 0;
   float next_jump = 0;
@@ -128,10 +126,10 @@ vector<float> calcLegFeatures(SampleSet* cluster, const sensor_msgs::LaserScan& 
     }
   }
 
-  features.push_back(prev_jump);/*prev_jump和next_jump有什么作用呢？*/
-  features.push_back(next_jump);//
+  features.push_back(prev_jump);
+  features.push_back(next_jump);
 
-  // Compute Width/*计算一个类的首位元素的距离，专利里面的Dk*/
+  // Compute Width
   float width = sqrt(pow((*first)->x - (*last)->x, 2) + pow((*first)->y - (*last)->y, 2));
   features.push_back(width);
 
@@ -175,7 +173,7 @@ vector<float> calcLegFeatures(SampleSet* cluster, const sensor_msgs::LaserScan& 
   cvReleaseMat(&rot_points);
   rot_points = 0;
 
-  features.push_back(linearity);//线性度
+  features.push_back(linearity);
 
   // Compute Circularity
   CvMat* A = cvCreateMat(num_points, 3, CV_64FC1);
@@ -220,12 +218,12 @@ vector<float> calcLegFeatures(SampleSet* cluster, const sensor_msgs::LaserScan& 
     circularity += pow(rc - sqrt(pow(xc - (*i)->x, 2) + pow(yc - (*i)->y, 2)), 2);
   }
 
-  features.push_back(circularity);//圆度
+  features.push_back(circularity);
 
   // Radius
   float radius = rc;
 
-  features.push_back(radius);//半径
+  features.push_back(radius);
 
   //Curvature:
   float mean_curvature = 0.0;
@@ -293,11 +291,11 @@ vector<float> calcLegFeatures(SampleSet* cluster, const sensor_msgs::LaserScan& 
 
   boundary_regularity = sqrt((sum_boundary_reg_sq - pow(boundary_length, 2) / num_points) / (num_points - 1));
 
-  features.push_back(boundary_length);//边界长度
-  features.push_back(ang_diff);//平均角度差
-  features.push_back(mean_curvature);//平均曲率
+  features.push_back(boundary_length);
+  features.push_back(ang_diff);
+  features.push_back(mean_curvature);
 
-  features.push_back(boundary_regularity);//边界正则性
+  features.push_back(boundary_regularity);
 
 
   // Mean angular difference
@@ -343,14 +341,6 @@ vector<float> calcLegFeatures(SampleSet* cluster, const sensor_msgs::LaserScan& 
 
   features.push_back(iav);
   features.push_back(std_iav);
- 
-  vector<float>:: iterator iter;
-  ROS_INFO("Start to print features************************");
-  for(iter=features.begin();iter!=features.end();++iter)
-  {
-      ROS_WARN("features = %f",*iter);//测试features输出
-  }
-
 
   return features;
 }

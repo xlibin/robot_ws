@@ -210,6 +210,93 @@ double AMCLLaser::BeamModel(AMCLLaserData *data, pf_sample_set_t* set)
   return(total_weight);
 }
 
+
+
+
+void AMCLLaser::LFM2subtract_scan(ros::Publisher& pub, AMCLLaserData *data, pf_vector_t pose, const sensor_msgs::LaserScanConstPtr& laser_origin, double threshold)
+{
+  AMCLLaser *self;
+  int i;
+  double z, pz;
+  double p;
+  double obs_range, obs_bearing;
+  pf_vector_t hit;
+
+  sensor_msgs::LaserScan laser_scan;//laser scan for leg detector that subtract the map
+  // laser_scan.header.stamp = laser_origin->header.stamp;
+  // laser_scan.header.frame_id = laser_origin->header.frame_id;
+  // laser_scan.angle_min = laser_origin->angle_min;
+  // laser_scan.angle_max = laser_origin->angle_max;
+  // laser_scan.angle_increment = laser_origin->angle_increment;
+  laser_scan = *laser_origin;  
+
+  self = (AMCLLaser*) data->sensor;
+ 
+  // Take account of the laser pose relative to the robot
+  pose = pf_vector_coord_add(self->laser_pose, pose);
+
+  p = 1.0;
+
+  // Pre-compute a couple of things
+  double z_hit_denom = 2 * self->sigma_hit * self->sigma_hit;
+  double z_rand_mult = 1.0/data->range_max;
+
+  
+
+  for (i = 0; i < data->range_count; i += 1)
+  {
+    obs_range = data->ranges[i][0];
+    obs_bearing = data->ranges[i][1];
+
+    // This model ignores max range readings
+    if(obs_range >= data->range_max)
+      continue;
+
+    // Check for NaN
+    if(obs_range != obs_range)
+      continue;
+
+    pz = 0.0;
+
+    // Compute the endpoint of the beam
+    hit.v[0] = pose.v[0] + obs_range * cos(pose.v[2] + obs_bearing);
+    hit.v[1] = pose.v[1] + obs_range * sin(pose.v[2] + obs_bearing);
+
+    // Convert to map grid coords.
+    int mi, mj;
+    mi = MAP_GXWX(self->map, hit.v[0]);
+    mj = MAP_GYWY(self->map, hit.v[1]);
+    
+    // Part 1: Get distance from the hit to closest obstacle.
+    // Off-map penalized as max distance
+    if(!MAP_VALID(self->map, mi, mj))
+      z = self->map->max_occ_dist;
+    else
+      z = self->map->cells[MAP_INDEX(self->map,mi,mj)].occ_dist;
+    // Gaussian model
+    // NOTE: this should have a normalization of 1/(sqrt(2pi)*sigma)
+    pz += self->z_hit * exp(-(z * z) / z_hit_denom);
+    // Part 2: random measurements
+    pz += self->z_rand * z_rand_mult;
+
+    // TODO: outlier rejection for short readings
+
+    assert(pz <= 1.0);
+    assert(pz >= 0.0);
+
+    if(pz > threshold){//if the beam ends on the map's obstacle, ignore it while detecting leg
+      laser_scan.ranges[i] = laser_scan.range_max;
+    }
+  }//data->range_count
+
+  pub.publish(laser_scan);
+
+}//void
+
+
+
+
+
 double AMCLLaser::LikelihoodFieldModel(AMCLLaserData *data, pf_sample_set_t* set)
 {
   AMCLLaser *self;
