@@ -50,7 +50,7 @@ void people_follow()
 
 	//get odom,get  current position of robot
 	tf::StampedTransform transform;
-  transform = get_base2map();//获取机器人位置
+	transform = get_base2map();//获取机器人位置
 	//caculate distance of robot to people计算机器人与行人目标的距离
 	float delta_x = best_people.pos.x - transform.getOrigin().x();
 	float delta_y = best_people.pos.y - transform.getOrigin().y();
