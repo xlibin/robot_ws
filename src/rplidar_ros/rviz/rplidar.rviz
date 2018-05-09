@@ -71,7 +71,7 @@ Visualization Manager:
       Queue Size: 1000
       Selectable: true
       Size (Pixels): 5
-      Size (m): 0.01
+      Size (m): 0.03
       Style: Squares
       Topic: /scan
       Unreliable: false
@@ -105,7 +105,7 @@ Visualization Manager:
         Value: false
       Name: Current View
       Near Clip Distance: 0.01
-      Scale: 192.661
+      Scale: 77.6021
       Target Frame: <Fixed Frame>
       Value: TopDownOrtho (rviz)
       X: -0.460725

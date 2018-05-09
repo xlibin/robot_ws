@@ -294,7 +294,7 @@ main(int argc, char** argv)
 
   // Override default sigint handler
   signal(SIGINT, sigintHandler);
-
+  printf("****************Begining construction of AmclNode");
   // Make our node available to sigintHandler
   amcl_node_ptr.reset(new AmclNode());
 
@@ -329,6 +329,7 @@ AmclNode::AmclNode() :
         first_map_received_(false),
         first_reconfigure_call_(true)
 {
+  ROS_INFO("****************Begining construction of AmclNode");
   boost::recursive_mutex::scoped_lock l(configuration_mutex_);
 
   // Grab params off the param server
@@ -462,6 +463,7 @@ AmclNode::AmclNode() :
   laser_check_interval_ = ros::Duration(15.0);
   check_laser_timer_ = nh_.createTimer(laser_check_interval_, 
                                        boost::bind(&AmclNode::checkLaserReceived, this, _1));
+  ROS_INFO("****************Finished construction of AmclNode");
 }
 
 void AmclNode::reconfigureCB(AMCLConfig &config, uint32_t level)
@@ -1424,20 +1426,31 @@ AmclNode::laserReceived(const sensor_msgs::LaserScanConstPtr& laser_scan)
 //otherwise, publish the origin scan, and change laser_scan->intensities[0] to -1
 //telling the leg detector
   if(latest_leg_scan_valid_){
-    tf::TransformListener listener;
+    ROS_WARN("latest_leg_scan_valid_");
+    //tf::TransformListener listener;
     tf::StampedTransform base2map;
     pf_vector_t base_pose;
     double yaw, pitch, roll;
-    listener.waitForTransform("/map", "/base_link",  ros::Time(0), ros :: Duration(3.0));
-    try
-    {
-      listener.lookupTransform("/map", "/base_link",  ros::Time(0), base2map );//获取base_link到odom的坐标系变换
-    }
-    catch (tf::TransformException ex)
-    {
-      ROS_ERROR("%s",ex.what());
-      ros::Duration(1.0).sleep();
-    }
+
+    //
+    // try
+    // {
+    //   ros::Time now = ros::Time::now();
+    //   // tf_->waitForTransform("/map", "/base_link",  ros::Time(0), ros :: Duration(10.0));
+    //   // tf_->lookupTransform("/map", "/base_link",  ros::Time(0), base2map);//获取base_link到odom的坐标系变换
+    //   tf_->waitForTransform(base_frame_id_, laser_scan->header.stamp,
+    //                      base_frame_id_, now,
+    //                      odom_frame_id_, ros::Duration(0.5));
+    //   tf_->lookupTransform(base_frame_id_, laser_scan->header.stamp,
+    //                      base_frame_id_, now,
+    //                      odom_frame_id_, base2map);
+    // }
+    // catch (tf::TransformException ex)
+    // {
+    //   ROS_WARN("transform base");
+    //   ROS_ERROR("%s",ex.what());
+    //   ros::Duration(1.0).sleep();
+    // }
     base_pose.v[0] = base2map.getOrigin().x();
     base_pose.v[1] = base2map.getOrigin().y();
     base2map.getBasis().getEulerYPR(yaw, pitch, roll);
