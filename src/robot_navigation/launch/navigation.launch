@@ -1,5 +1,5 @@
 <launch>
-	<node pkg= "robot_bringup" name = "arduino" type = "robot_driver.py" output = "screen">
+	<node pkg= "robot_bringup" name = "arduino" type = "robot_driver.py" >
 		<rosparam file = "$(find robot_bringup)/config/robot_params.yaml" command = "load" />
 	</node>
   <!-- <include file = "$(find robot_bringup)/launch/minimal.launch"/> -->

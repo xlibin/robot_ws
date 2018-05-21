@@ -679,6 +679,9 @@ public:
 
   void laserCallback(const sensor_msgs::LaserScan::ConstPtr& scan)
   {
+    if(scan->intensities[0] == -1.0f){
+      ROS_WARN("Located faild! Using original scan.");
+    }
     ScanProcessor processor(*scan, mask_);
 
     processor.splitConnected(connected_thresh_);

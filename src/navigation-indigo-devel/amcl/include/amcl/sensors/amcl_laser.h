@@ -96,7 +96,7 @@ class AMCLLaser : public AMCLSensor
   public: void SetLaserPose(pf_vector_t& laser_pose) 
           {this->laser_pose = laser_pose;}
 
-  static void LFM2subtract_scan(ros::Publisher& pub, AMCLLaserData *data, pf_vector_t pose, const sensor_msgs::LaserScanConstPtr& laser_origin, double threshold);
+  static void LFM2subtract_scan(ros::Publisher* pub, AMCLLaserData *data, pf_vector_t pose, const sensor_msgs::LaserScanConstPtr& laser_origin, double threshold);
 
   // Determine the probability for the given pose
   private: static double BeamModel(AMCLLaserData *data, 

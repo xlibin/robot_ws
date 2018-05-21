@@ -1169,7 +1169,7 @@ AmclNode::laserReceived(const sensor_msgs::LaserScanConstPtr& laser_scan)
   }
 
   bool resampled = false;
-  AMCLLaserData ldata;
+  static AMCLLaserData ldata;
   // If the robot has moved, update the filter
   if(lasers_update_[laser_index])
   {
@@ -1296,10 +1296,10 @@ AmclNode::laserReceived(const sensor_msgs::LaserScanConstPtr& laser_scan)
         max_weight_hyp = hyp_count;
       }
     }
-
+    ROS_WARN("max weight of pf%f*******************", max_weight);
     if(max_weight > 0.0)
     {
-      ROS_DEBUG("Max weight pose: %.3f %.3f %.3f",
+      ROS_WARN("Max weight pose: %.3f %.3f %.3f",
                 hyps[max_weight_hyp].pf_pose_mean.v[0],
                 hyps[max_weight_hyp].pf_pose_mean.v[1],
                 hyps[max_weight_hyp].pf_pose_mean.v[2]);
@@ -1309,6 +1309,7 @@ AmclNode::laserReceived(const sensor_msgs::LaserScanConstPtr& laser_scan)
          pf_matrix_fprintf(hyps[max_weight_hyp].pf_pose_cov, stdout, "%6.3f");
          puts("");
        */
+      //AMCLLaser::LFM2subtract_scan(&leg_detector_scan_pub_, &ldata, hyps[max_weight_hyp].pf_pose_mean, laser_scan, match_map_threshold_);
       geometry_msgs::PoseWithCovarianceStamped p;
       // Fill in the header
       p.header.frame_id = global_frame_id_;
@@ -1426,37 +1427,41 @@ AmclNode::laserReceived(const sensor_msgs::LaserScanConstPtr& laser_scan)
 //otherwise, publish the origin scan, and change laser_scan->intensities[0] to -1
 //telling the leg detector
   if(latest_leg_scan_valid_){
-    ROS_WARN("latest_leg_scan_valid_");
+    //ROS_WARN("latest_leg_scan_valid_");
     //tf::TransformListener listener;
     tf::StampedTransform base2map;
     pf_vector_t base_pose;
     double yaw, pitch, roll;
 
-    //
-    // try
-    // {
-    //   ros::Time now = ros::Time::now();
-    //   // tf_->waitForTransform("/map", "/base_link",  ros::Time(0), ros :: Duration(10.0));
-    //   // tf_->lookupTransform("/map", "/base_link",  ros::Time(0), base2map);//获取base_link到odom的坐标系变换
-    //   tf_->waitForTransform(base_frame_id_, laser_scan->header.stamp,
-    //                      base_frame_id_, now,
-    //                      odom_frame_id_, ros::Duration(0.5));
-    //   tf_->lookupTransform(base_frame_id_, laser_scan->header.stamp,
-    //                      base_frame_id_, now,
-    //                      odom_frame_id_, base2map);
-    // }
-    // catch (tf::TransformException ex)
-    // {
-    //   ROS_WARN("transform base");
-    //   ROS_ERROR("%s",ex.what());
-    //   ros::Duration(1.0).sleep();
-    // }
+    
+    try
+    {
+      ros::Time now = ros::Time::now();
+      tf_->waitForTransform("/map", "/base_link",  ros::Time(0), ros :: Duration(10.0));
+      tf_->lookupTransform("/map", "/base_link",  ros::Time(0), base2map);//获取base_link到odom的坐标系变换
+      // tf_->waitForTransform(base_frame_id_, laser_scan->header.stamp,
+      //                    base_frame_id_, now,
+      //                    odom_frame_id_, ros::Duration(0.5));
+      // tf_->lookupTransform(base_frame_id_, laser_scan->header.stamp,
+      //                    base_frame_id_, now,
+                         // odom_frame_id_, base2map);
+    }
+    catch (tf::TransformException ex)
+    {
+      ROS_WARN("transform base");
+      ROS_ERROR("%s",ex.what());
+      ros::Duration(1.0).sleep();
+    }
     base_pose.v[0] = base2map.getOrigin().x();
     base_pose.v[1] = base2map.getOrigin().y();
     base2map.getBasis().getEulerYPR(yaw, pitch, roll);
     base_pose.v[2] = yaw;
 
-    AMCLLaser::LFM2subtract_scan(leg_detector_scan_pub_, &ldata, base_pose, laser_scan, match_map_threshold_);
+    ROS_INFO("calculated pose: %6.3f %6.3f %6.3f",
+               base_pose.v[0],
+               base_pose.v[1],
+               base_pose.v[2]);
+    AMCLLaser::LFM2subtract_scan(&leg_detector_scan_pub_, &ldata, base_pose, laser_scan, match_map_threshold_);
   }else{
     sensor_msgs::LaserScan deal_laser_scan = *laser_scan;
     deal_laser_scan.intensities[0] = -1.0f;

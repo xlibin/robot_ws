@@ -213,7 +213,7 @@ double AMCLLaser::BeamModel(AMCLLaserData *data, pf_sample_set_t* set)
 
 
 
-void AMCLLaser::LFM2subtract_scan(ros::Publisher& pub, AMCLLaserData *data, pf_vector_t pose, const sensor_msgs::LaserScanConstPtr& laser_origin, double threshold)
+void AMCLLaser::LFM2subtract_scan(ros::Publisher* pub, AMCLLaserData *data, pf_vector_t pose, const sensor_msgs::LaserScanConstPtr& laser_origin, double threshold)
 {
   AMCLLaser *self;
   int i;
@@ -232,14 +232,14 @@ void AMCLLaser::LFM2subtract_scan(ros::Publisher& pub, AMCLLaserData *data, pf_v
 
   self = (AMCLLaser*) data->sensor;
  
-  // Take account of the laser pose relative to the robot
-  pose = pf_vector_coord_add(self->laser_pose, pose);
+   // Take account of the laser pose relative to the robot
+   pose = pf_vector_coord_add(self->laser_pose, pose);
 
-  p = 1.0;
+   p = 1.0;
 
-  // Pre-compute a couple of things
-  double z_hit_denom = 2 * self->sigma_hit * self->sigma_hit;
-  double z_rand_mult = 1.0/data->range_max;
+   // Pre-compute a couple of things
+   double z_hit_denom = 2 * self->sigma_hit * self->sigma_hit;
+   double z_rand_mult = 1.0/data->range_max;
 
   
 
@@ -289,7 +289,7 @@ void AMCLLaser::LFM2subtract_scan(ros::Publisher& pub, AMCLLaserData *data, pf_v
     }
   }//data->range_count
 
-  pub.publish(laser_scan);
+  pub->publish(laser_scan);
 
 }//void
 
