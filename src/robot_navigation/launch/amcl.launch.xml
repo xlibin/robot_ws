@@ -44,7 +44,7 @@
     <param name="transform_tolerance"       value="1.0"/>
     <param name="recovery_alpha_slow"       value="0.0"/>
     <param name="recovery_alpha_fast"       value="0.0"/>
-    <param name="match_map_threshold_"      value="0.5"/>
+    <param name="match_map_threshold"      value="0.5"/>
 
    <!-- 不指定初始位置，修改以下参数-->
 <!--

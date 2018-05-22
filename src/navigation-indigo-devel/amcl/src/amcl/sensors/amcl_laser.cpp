@@ -245,8 +245,11 @@ void AMCLLaser::LFM2subtract_scan(ros::Publisher* pub, AMCLLaserData *data, pf_v
 
   for (i = 0; i < data->range_count; i += 1)
   {
-    obs_range = data->ranges[i][0];
+    obs_range = laser_origin->ranges[i];
     obs_bearing = data->ranges[i][1];
+
+    if(obs_range <= laser_origin->range_min)
+      continue;
 
     // This model ignores max range readings
     if(obs_range >= data->range_max)
@@ -283,12 +286,18 @@ void AMCLLaser::LFM2subtract_scan(ros::Publisher* pub, AMCLLaserData *data, pf_v
 
     assert(pz <= 1.0);
     assert(pz >= 0.0);
+    p += pz*pz*pz;
 
     if(pz > threshold){//if the beam ends on the map's obstacle, ignore it while detecting leg
       laser_scan.ranges[i] = laser_scan.range_max;
     }
   }//data->range_count
-
+  ROS_WARN("p is: %f", p);
+  static bool show = true;
+  if(show == true){
+    ROS_ERROR("self->sigma_hit: %.3f~~~data->range_max: %.3f~~~self->z_hit: %.3f~~~self->z_rand: %.3f~~~threshold: %.3f", self->sigma_hit, data->range_max, self->z_hit, self->z_rand, threshold);
+    show = false;
+  }
   pub->publish(laser_scan);
 
 }//void

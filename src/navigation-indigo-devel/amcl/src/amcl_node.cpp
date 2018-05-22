@@ -1218,7 +1218,10 @@ AmclNode::laserReceived(const sensor_msgs::LaserScanConstPtr& laser_scan)
     else
       range_min = laser_scan->range_min;
     // The AMCLLaserData destructor will free this memory
-    ldata.ranges = new double[ldata.range_count][2];
+    if(ldata.ranges == NULL){
+      ldata.ranges = new double[ldata.range_count][2];
+      ROS_WARN("ldata is NULL*********************");
+    }
     ROS_ASSERT(ldata.ranges);
     for(int i=0;i<ldata.range_count;i++)
     {
