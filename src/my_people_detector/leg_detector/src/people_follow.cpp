@@ -134,19 +134,23 @@ void people_follow_callback(const people_msgs::PositionMeasurementArray::ConstPt
 	vector<people_msgs::PositionMeasurement> people_array;
 	people_array = message->people;//people_array用于存放行人目标阵列
 
-	  vector<people_msgs::PositionMeasurement>:: iterator iter;
+	vector<people_msgs::PositionMeasurement>:: iterator iter;
+
+	if(people_array.empty()){
+		return;
+	}
 
 	/*get the best people from the people_array*/
 	sort(people_array.begin(),people_array.end(),compare);//根据reliability，对people_array进行排序，按从大到小的顺序排序
 
 
-	  for(iter=people_array.begin();iter!=people_array.end();++iter)
- 	 {
+	for(iter=people_array.begin();iter!=people_array.end();++iter)
+ 	{
 		ROS_WARN("people_array1.pos.x= %f",(*iter).pos.x);
 		ROS_WARN("people_array1.pos.y= %f",(*iter).pos.y);
 		ROS_WARN("people_array1.pos.z= %f",(*iter).pos.z);
 		ROS_WARN("people_array1.reliability= %f",(*iter).reliability);
- 	 }
+ 	}
 	vector<people_msgs::PositionMeasurement> :: iterator iter1 = people_array.begin();
 	best_people = *iter1;//获得people_array的第一个元素，即reliability最大的行人目标，将其视为跟踪目标
 

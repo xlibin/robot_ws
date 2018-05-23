@@ -8,7 +8,6 @@ Panels:
         - /TF1/Tree1
         - /Global Map1
         - /Local Map1/Planner1
-        - /leg_scan1
       Splitter Ratio: 0.514535
     Tree Height: 531
   - Class: rviz/Selection
@@ -116,7 +115,7 @@ Visualization Manager:
       Channel Name: intensity
       Class: rviz/LaserScan
       Color: 255; 255; 255
-      Color Transformer: Intensity
+      Color Transformer: FlatColor
       Decay Time: 0
       Enabled: true
       Invert Rainbow: false
@@ -368,6 +367,15 @@ Visualization Manager:
       Use Fixed Frame: true
       Use rainbow: true
       Value: true
+    - Class: rviz/Marker
+      Enabled: true
+      Marker Topic: /visualization_marker
+      Name: Marker
+      Namespaces:
+        LEGS: true
+        PEOPLE: true
+      Queue Size: 100
+      Value: true
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
@@ -390,7 +398,7 @@ Visualization Manager:
   Value: true
   Views:
     Current:
-      Angle: 2.31
+      Angle: 2.34
       Class: rviz/TopDownOrtho
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.06
