@@ -31,6 +31,7 @@
 *  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 *  POSSIBILITY OF SUCH DAMAGE.
 *********************************************************************/
+#define SHOW_TRAJECTORY 1
 #include <ros/ros.h>
 
 #include <leg_detector/LegDetectorConfig.h>
@@ -56,6 +57,10 @@
 #include <dynamic_reconfigure/server.h>
 
 #include <algorithm>
+#ifdef SHOW_TRAJECTORY
+#include <geometry_msgs/Pose.h>
+#include <geometry_msgs/Quaternion.h>
+#endif
 
 using namespace std;
 using namespace laser_processor;
@@ -64,6 +69,10 @@ using namespace tf;
 using namespace estimation;
 using namespace BFL;
 using namespace MatrixWrapper;
+
+#ifdef SHOW_TRAJECTORY
+  ros::Publisher marker_pub;
+#endif 
 
 
 static double no_observation_timeout_s = 0.5;
@@ -686,6 +695,7 @@ public:
 
     processor.splitConnected(connected_thresh_);
     processor.removeLessThan(5);
+    processor.removeMoreThan(30);
 
     CvMat* tmp_mat = cvCreateMat(1, feat_count_, CV_32FC1);
 
@@ -984,10 +994,122 @@ public:
     if (publish_people_)
     {
       array.people = people;
+#ifdef SHOW_TRAJECTORY
+      static bool init_once = true;
+      static int marker_id = 0;
+      static vector<people_msgs::PositionMeasurement>:: iterator iter;
+      static visualization_msgs::Marker marker_robot;
+      static visualization_msgs::Marker marker_best;
+      static visualization_msgs::Marker marker_people;
+      static tf::StampedTransform transform;;
+
+      if(init_once){
+      //robot
+        marker_robot.header.frame_id = "/map"; 
+        marker_robot.ns = "robot";
+        marker_robot.type = visualization_msgs::Marker::SPHERE;
+        marker_robot.action = visualization_msgs::Marker::ADD;
+        marker_robot.pose.position.z = 0;
+        marker_robot.pose.orientation.x = 0.0;
+        marker_robot.pose.orientation.y = 0.0;
+        marker_robot.pose.orientation.z = 0.0;
+        marker_robot.pose.orientation.w = 1.0;
+        marker_robot.scale.x = 0.1;
+        marker_robot.scale.y = 0.1;
+        marker_robot.scale.z = 0.1;
+        marker_robot.color.r = 0.0f;
+        marker_robot.color.g = 0.0f;
+        marker_robot.color.b = 0.0f;
+        marker_robot.color.a = 0.5;
+        marker_robot.lifetime = ros::Duration();
+      //best people
+        marker_best.header.frame_id = "/map";
+        marker_best.ns = "best";
+        marker_best.type = visualization_msgs::Marker::CUBE;
+        marker_best.action = visualization_msgs::Marker::ADD;
+        marker_best.pose.position.z = 0;
+        marker_best.pose.orientation.x = 0.0;
+        marker_best.pose.orientation.y = 0.0;
+        marker_best.pose.orientation.z = 0.0;
+        marker_best.pose.orientation.w = 1.0;
+        marker_best.scale.x = 0.1;
+        marker_best.scale.y = 0.1;
+        marker_best.scale.z = 0.1;
+        marker_best.color.r = 1.0f;
+        marker_best.color.g = 1.0f;
+        marker_best.color.b = 1.0f;
+        marker_best.color.a = 0.5;
+        marker_best.lifetime = ros::Duration();
+      //people
+        marker_people.header.frame_id = "/map";
+        marker_people.type = visualization_msgs::Marker::CUBE;
+        marker_people.action = visualization_msgs::Marker::ADD;
+        marker_people.pose.position.z = 0;
+        marker_people.pose.orientation.x = 0.0;
+        marker_people.pose.orientation.y = 0.0;
+        marker_people.pose.orientation.z = 0.0;
+        marker_people.pose.orientation.w = 1.0;
+        marker_people.scale.x = 0.05;
+        marker_people.scale.y = 0.1;
+        marker_people.scale.z = 0.1;
+        marker_people.color.r = 0.0f;
+        marker_people.color.g = 0.0f;
+        marker_people.color.b = 0.0f;
+        marker_people.color.a = 0.5;
+        //marker_people.text = "X";
+        marker_people.lifetime = ros::Duration();
+
+        init_once = false;
+
+      }
+      tf::StampedTransform get_base2map();
+      bool compare(const people_msgs::PositionMeasurement& a, const people_msgs::PositionMeasurement& b);
+      
+      if(people.empty())
+        return;
+      ros::Time t_begin = ros::Time::now();
+      sort(people.begin(),people.end(),compare);//根据reliability，对people_array进行排序，按从大到小的顺序排序
+      ros::Time t_sort = ros::Time::now();
+      ROS_INFO("sort time: %f", t_sort.toSec() - t_begin.toSec());
+      marker_id++;
+      //robot
+      transform = get_base2map();//获取机器人位置
+      ros::Time t_tran = ros::Time::now();
+      ROS_INFO("tran time: %f", t_tran.toSec() - t_sort.toSec());
+      marker_robot.header.stamp = ros::Time::now();
+      marker_robot.id = marker_id;
+      marker_robot.pose.position.x = transform.getOrigin().x();
+      marker_robot.pose.position.y = transform.getOrigin().y();
+      marker_pub.publish(marker_robot);
+      ros::Time t_robot = ros::Time::now();
+      ROS_INFO("robot time: %f", t_robot.toSec() - t_tran.toSec());
+      //best people
+      iter=people.begin();      
+      marker_best.header.stamp = ros::Time::now();
+      marker_best.id = marker_id;
+      marker_best.pose.position.x = (*iter).pos.x;
+      marker_best.pose.position.y = (*iter).pos.y;
+      marker_pub.publish(marker_best);
+      ros::Time t_best = ros::Time::now();
+      ROS_INFO("best time: %f", t_best.toSec() - t_robot.toSec());
+      //people
+      iter++;
+      for(;iter!=people.end();++iter){
+        marker_people.header.stamp = ros::Time::now();
+        marker_people.ns = (*iter).name;
+        marker_people.id = marker_id;
+        marker_people.pose.position.x = (*iter).pos.x;
+        marker_people.pose.position.y = (*iter).pos.y;
+        marker_pub.publish(marker_people);
+      }
+      ros::Time t_public = ros::Time::now();
+      ROS_INFO("public time: %f", t_public.toSec() - t_sort.toSec());
+#endif
       people_measurements_pub_.publish(array);
     }
   }
 };
+
 
 int main(int argc, char **argv)
 {
@@ -995,9 +1117,64 @@ int main(int argc, char **argv)
   g_argc = argc;
   g_argv = argv;
   ros::NodeHandle nh;
+#ifdef SHOW_TRAJECTORY
+  marker_pub = nh.advertise<visualization_msgs::Marker>("trajectory_marker", 1000);
+#endif
   LegDetector ld(nh);
   ros::spin();
 
   return 0;
 }
+
+
+#ifdef SHOW_TRAJECTORY
+//获取里程计函数，用于获取机器人的实时位置，存放与transform中
+tf::StampedTransform get_base2map()
+{
+  static tf::TransformListener listener;
+  tf::StampedTransform transform;
+  listener.waitForTransform("/map", "/base_link",  ros::Time(0), ros :: Duration(3.0));
+  try
+  {
+    listener.lookupTransform("/map", "/base_link",  ros::Time(0), transform );//获取base_link到odom的坐标系变换
+  }
+  catch (tf::TransformException ex)
+  {
+    ROS_ERROR("%s",ex.what());
+    ros::Duration(1.0).sleep();
+  }
+  
+  return transform;
+}
+
+/*compare function . return the highest reliability of people_array*/
+//people_array排序函数，根据reliability属性从大到小排序
+bool compare(const people_msgs::PositionMeasurement& a, const people_msgs::PositionMeasurement& b)
+{
+  //return x.reliability > y.reliability;
+  double yaw, pitch, roll;
+  tf::StampedTransform transform;
+  transform = get_base2map();//获取机器人位置
+  transform.getBasis().getEulerYPR(yaw, pitch, roll);
+
+  float a_delta_x = a.pos.x - transform.getOrigin().x();
+  float a_delta_y = a.pos.y - transform.getOrigin().y();
+  double a_dist_robot_people = sqrt(a_delta_x * a_delta_x  + a_delta_y * a_delta_y);
+  float a_w = atan2(a_delta_y, a_delta_x);
+
+  float b_delta_x = b.pos.x - transform.getOrigin().x();
+  float b_delta_y = b.pos.y - transform.getOrigin().y();
+  double b_dist_robot_people = sqrt(b_delta_x * b_delta_x  + b_delta_y * b_delta_y);
+  float b_w = atan2(b_delta_y, b_delta_x);
+  //printf("robot's yaw: %f, a's yaw: %f, b's yaw: %f", yaw, a_w, b_w);
+  if(fabs(a_w - yaw) < 0.5 && fabs(b_w - yaw) < 0.5)
+    return a_dist_robot_people < b_dist_robot_people;
+  else if(fabs(a_w - yaw) < 0.5)
+    return true;
+  else if(fabs(b_w - yaw) < 0.5)
+    return false;
+  else
+    return a_dist_robot_people < b_dist_robot_people;
+}
+#endif 
 

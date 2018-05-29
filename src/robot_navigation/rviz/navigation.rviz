@@ -374,6 +374,22 @@ Visualization Manager:
       Namespaces:
         LEGS: true
         PEOPLE: true
+        Person0: true
+        Person1: true
+        Person2: true
+        Person3: true
+        Person4: true
+        best: true
+        robot: true
+      Queue Size: 100
+      Value: true
+    - Class: rviz/Marker
+      Enabled: true
+      Marker Topic: /trajectory_marker
+      Name: Marker
+      Namespaces:
+        best: true
+        robot: true
       Queue Size: 100
       Value: true
   Enabled: true
@@ -398,7 +414,7 @@ Visualization Manager:
   Value: true
   Views:
     Current:
-      Angle: 2.34
+      Angle: 2.415
       Class: rviz/TopDownOrtho
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.06
