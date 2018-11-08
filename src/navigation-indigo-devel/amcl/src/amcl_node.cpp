@@ -69,6 +69,7 @@
 #define NEW_UNIFORM_SAMPLING 1
 
 using namespace amcl;
+bool g_is_leg_scan = true;
 
 // Pose hypothesis
 typedef struct
@@ -512,6 +513,7 @@ void AmclNode::reconfigureCB(AMCLConfig &config, uint32_t level)
   sigma_hit_ = config.laser_sigma_hit;
   lambda_short_ = config.laser_lambda_short;
   laser_likelihood_max_dist_ = config.laser_likelihood_max_dist;
+  g_is_leg_scan = config.g_is_leg_scan;
 
   if(config.laser_model_type == "beam")
     laser_model_type_ = LASER_MODEL_BEAM;
@@ -1429,7 +1431,7 @@ AmclNode::laserReceived(const sensor_msgs::LaserScanConstPtr& laser_scan)
 //if pose is accurate, publish the scan subtract background
 //otherwise, publish the origin scan, and change laser_scan->intensities[0] to -1
 //telling the leg detector
-  if(latest_leg_scan_valid_){
+  if(latest_leg_scan_valid_ && g_is_leg_scan){
     //ROS_WARN("latest_leg_scan_valid_");
     //tf::TransformListener listener;
     tf::StampedTransform base2map;
