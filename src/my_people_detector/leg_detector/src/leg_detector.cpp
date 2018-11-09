@@ -691,6 +691,7 @@ public:
     if(scan->intensities[0] == -1.0f){
       ROS_WARN("Located faild! Using original scan.");
     }
+    ros::Time leg_detector_begin = ros::Time::now();
     ScanProcessor processor(*scan, mask_);
 
     processor.splitConnected(connected_thresh_);
@@ -859,6 +860,8 @@ public:
     if (!use_seeds_)
       pairLegs();
 
+    ros::Duration leg_detector_duration = ros::Time::now() - leg_detector_begin;
+    ROS_INFO("leg detecotr time: %f", leg_detector_duration.toSec());
     // Publish Data!
     int i = 0;
     vector<people_msgs::PositionMeasurement> people;

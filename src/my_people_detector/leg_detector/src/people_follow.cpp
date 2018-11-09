@@ -1,4 +1,5 @@
 //#define SHOW_TRAJECTORY 1
+#define SAVE_SPEED_AND_DISTANCE 1
 #include <ros/ros.h>
 #include <move_base_msgs/MoveBaseAction.h>
 #include <actionlib/client/simple_action_client.h>
@@ -21,6 +22,11 @@ using std :: vector;
 	#include <visualization_msgs/Marker.h>
 #endif
 
+#ifdef SAVE_SPEED_AND_DISTANCE
+    #include <fstream>
+    #include <nav_msgs/Odometry.h>
+#endif
+
 using geometry_msgs :: Quaternion;
 using geometry_msgs :: Pose;
 
@@ -36,6 +42,13 @@ people_msgs::PositionMeasurement best_people;
 	ros::Publisher marker_pub;
 #endif
 
+#ifdef SAVE_SPEED_AND_DISTANCE
+    ofstream g_log_file;
+    ros::Subscriber sub_odom;
+    void SubOdomCallback(const nav_msgs::Odometry::ConstPtr& msg);
+    double g_robot_speed;
+#endif
+
 int main(int argc , char ** argv)
 {
 	ros :: init (argc , argv , "people_follow");
@@ -43,12 +56,18 @@ int main(int argc , char ** argv)
 #ifdef SHOW_TRAJECTORY
 	marker_pub = n.advertise<visualization_msgs::Marker>("visualization_marker", 1);
 #endif
+#ifdef SAVE_SPEED_AND_DISTANCE
+    g_log_file.open("~/Documents/robot_speed_and_dist.txt", ios::out);
+    sub_odom = n.subscribe("odom", 50, SubOdomCallback);
+#endif
 //订阅行人检测topic，每受到一个people_tracker_measurements消息，调用people_follow_callback函数
 	ros :: Subscriber sub_people = n.subscribe("people_tracker_measurements", 1,  people_follow_callback);
 	//people_follow();
-	while(ros::ok()){
-		ros::spin();
-	}
+	ros::spin();
+
+#ifdef SAVE_SPEED_AND_DISTANCE
+    g_log_file.close();
+#endif
 	return 0;
 }
 /*********************************************************************************/
@@ -74,6 +93,9 @@ void people_follow()
 	float delta_y = best_people.pos.y - transform.getOrigin().y();
 	double dist_robot_people = sqrt(delta_x * delta_x  + delta_y * delta_y);
 	double speed_val = 0.2;
+#ifdef SAVE_SPEED_AND_DISTANCE
+    g_log_file  << dist_robot_people << " " << g_robot_speed << endl;
+#endif
 /*********************************************************************************/
 	//tell the action client that we want to spin a thread by default
 	MoveBaseClient ac("move_base" , true);
@@ -306,4 +328,12 @@ tf::StampedTransform get_base2map()
 	
 	return transform;
 }
+
+
+#ifdef SAVE_SPEED_AND_DISTANCE
+void SubOdomCallback(const nav_msgs::Odometry::ConstPtr& msg)
+{
+    g_robot_speed = msg->twist.twist.linear.x;
+}
+#endif
 
