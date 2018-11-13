@@ -43,7 +43,7 @@ people_msgs::PositionMeasurement best_people;
 #endif
 
 #ifdef SAVE_SPEED_AND_DISTANCE
-    ofstream g_log_file;
+    std::ofstream g_log_file;
     ros::Subscriber sub_odom;
     void SubOdomCallback(const nav_msgs::Odometry::ConstPtr& msg);
     double g_robot_speed;
@@ -57,11 +57,11 @@ int main(int argc , char ** argv)
 	marker_pub = n.advertise<visualization_msgs::Marker>("visualization_marker", 1);
 #endif
 #ifdef SAVE_SPEED_AND_DISTANCE
-    g_log_file.open("~/Documents/robot_speed_and_dist.txt", ios::out);
+    g_log_file.open("/home/trobot/Documents/robot_speed_and_dist.txt", std::ios::out);
     sub_odom = n.subscribe("odom", 50, SubOdomCallback);
 #endif
 //订阅行人检测topic，每受到一个people_tracker_measurements消息，调用people_follow_callback函数
-	ros :: Subscriber sub_people = n.subscribe("people_tracker_measurements", 1,  people_follow_callback);
+	ros :: Subscriber sub_people = n.subscribe("people_tracker_measurements", 10,  people_follow_callback);
 	//people_follow();
 	ros::spin();
 
@@ -94,17 +94,17 @@ void people_follow()
 	double dist_robot_people = sqrt(delta_x * delta_x  + delta_y * delta_y);
 	double speed_val = 0.2;
 #ifdef SAVE_SPEED_AND_DISTANCE
-    g_log_file  << dist_robot_people << " " << g_robot_speed << endl;
+    g_log_file  << dist_robot_people << " " << g_robot_speed << std::endl;
 #endif
 /*********************************************************************************/
 	//tell the action client that we want to spin a thread by default
-	MoveBaseClient ac("move_base" , true);
-	//wait for the action server to come up 
-	while(! ac.waitForServer(ros :: Duration(5.0)))
-	{
-		ROS_INFO("Waiting for the move_base action server to come up");
-	}
-	/*createting MoveBaseActionGoal*/
+	// MoveBaseClient ac("move_base" , true);
+	// //wait for the action server to come up 
+	// while(! ac.waitForServer(ros :: Duration(5.0)))
+	// {
+	// 	ROS_INFO("Waiting for the move_base action server to come up");
+	// }
+	// /*createting MoveBaseActionGoal*/
 	move_base_msgs :: MoveBaseGoal goal;
 	goal.target_pose.header.frame_id = "map";//base_link or map
 	goal.target_pose.header.stamp = ros :: Time :: now();
@@ -140,26 +140,26 @@ void people_follow()
 		ROS_WARN("robot's yaw: %f, goal's yaw: %f", yaw, atan2(delta_y, delta_x));
 		//wait for the action server to come up 等待move_base启动
 
-		while(! ac.waitForServer(ros :: Duration(5.0)))
-		{
-			ROS_WARN("Waiting for the move_base action server to come up");
-		}
-		ac.sendGoal(goal);//sending goal发送导航目标
-//allow 2 second to get there，允许2s到达目标，否则取消goal，从新产生goal
-		bool finished_within_time = ac.waitForResult(ros :: Duration(10.0));
-		if(!finished_within_time)
-		{
-			ac.cancelGoal();
-			ROS_WARN("Timed out achieving goal ");//未能在2s内到达目标
-		}
-		else if(ac.getState() == actionlib :: SimpleClientGoalState :: SUCCEEDED)
-		{
-			ROS_WARN("I have go there");//成功到达目标
-		}
-		else
-		{
-			ROS_WARN("The base failed to go to people for some reason");
-		}
+// 		while(! ac.waitForServer(ros :: Duration(5.0)))
+// 		{
+// 			ROS_WARN("Waiting for the move_base action server to come up");
+// 		}
+// 		ac.sendGoal(goal);//sending goal发送导航目标
+// //allow 2 second to get there，允许2s到达目标，否则取消goal，从新产生goal
+// 		bool finished_within_time = ac.waitForResult(ros :: Duration(10.0));
+// 		if(!finished_within_time)
+// 		{
+// 			ac.cancelGoal();
+// 			ROS_WARN("Timed out achieving goal ");//未能在2s内到达目标
+// 		}
+// 		else if(ac.getState() == actionlib :: SimpleClientGoalState :: SUCCEEDED)
+// 		{
+// 			ROS_WARN("I have go there");//成功到达目标
+// 		}
+// 		else
+// 		{
+// 			ROS_WARN("The base failed to go to people for some reason");
+// 		}
 	}
 	  	
 	//ros::spin();

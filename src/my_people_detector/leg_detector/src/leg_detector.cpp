@@ -309,7 +309,7 @@ public:
 
     // advertise topics
     leg_measurements_pub_ = nh_.advertise<people_msgs::PositionMeasurementArray>("leg_tracker_measurements", 0);
-    people_measurements_pub_ = nh_.advertise<people_msgs::PositionMeasurementArray>("people_tracker_measurements", 0);
+    people_measurements_pub_ = nh_.advertise<people_msgs::PositionMeasurementArray>("people_tracker_measurements", 10);
     markers_pub_ = nh_.advertise<visualization_msgs::Marker>("visualization_marker", 20);
 
     if (use_seeds_)
@@ -353,7 +353,7 @@ public:
       laser_notifier_.setTargetFrame(fixed_frame);
       people_notifier_.setTargetFrame(fixed_frame);
     }
-
+    
     kal_p                    = config.kalman_p;
     kal_q                    = config.kalman_q;
     kal_r                    = config.kalman_r;
@@ -862,6 +862,7 @@ public:
 
     ros::Duration leg_detector_duration = ros::Time::now() - leg_detector_begin;
     ROS_INFO("leg detecotr time: %f", leg_detector_duration.toSec());
+    //ROS_INFO("fixed_frame: %s", fixed_frame.c_str());
     // Publish Data!
     int i = 0;
     vector<people_msgs::PositionMeasurement> people;
@@ -1070,22 +1071,22 @@ public:
       
       if(people.empty())
         return;
-      ros::Time t_begin = ros::Time::now();
+      //ros::Time t_begin = ros::Time::now();
       sort(people.begin(),people.end(),compare);//根据reliability，对people_array进行排序，按从大到小的顺序排序
-      ros::Time t_sort = ros::Time::now();
-      ROS_INFO("sort time: %f", t_sort.toSec() - t_begin.toSec());
+      //ros::Time t_sort = ros::Time::now();
+      //ROS_INFO("sort time: %f", t_sort.toSec() - t_begin.toSec());
       marker_id++;
       //robot
       transform = get_base2map();//获取机器人位置
-      ros::Time t_tran = ros::Time::now();
-      ROS_INFO("tran time: %f", t_tran.toSec() - t_sort.toSec());
+      //ros::Time t_tran = ros::Time::now();
+      //ROS_INFO("tran time: %f", t_tran.toSec() - t_sort.toSec());
       marker_robot.header.stamp = ros::Time::now();
       marker_robot.id = marker_id;
       marker_robot.pose.position.x = transform.getOrigin().x();
       marker_robot.pose.position.y = transform.getOrigin().y();
       marker_pub.publish(marker_robot);
-      ros::Time t_robot = ros::Time::now();
-      ROS_INFO("robot time: %f", t_robot.toSec() - t_tran.toSec());
+      //ros::Time t_robot = ros::Time::now();
+      //ROS_INFO("robot time: %f", t_robot.toSec() - t_tran.toSec());
       //best people
       iter=people.begin();      
       marker_best.header.stamp = ros::Time::now();
@@ -1093,8 +1094,8 @@ public:
       marker_best.pose.position.x = (*iter).pos.x;
       marker_best.pose.position.y = (*iter).pos.y;
       marker_pub.publish(marker_best);
-      ros::Time t_best = ros::Time::now();
-      ROS_INFO("best time: %f", t_best.toSec() - t_robot.toSec());
+      //ros::Time t_best = ros::Time::now();
+      //ROS_INFO("best time: %f", t_best.toSec() - t_robot.toSec());
       //people
       iter++;
       for(;iter!=people.end();++iter){
@@ -1105,8 +1106,8 @@ public:
         marker_people.pose.position.y = (*iter).pos.y;
         marker_pub.publish(marker_people);
       }
-      ros::Time t_public = ros::Time::now();
-      ROS_INFO("public time: %f", t_public.toSec() - t_sort.toSec());
+      //ros::Time t_public = ros::Time::now();
+      //ROS_INFO("public time: %f", t_public.toSec() - t_sort.toSec());
 #endif
       people_measurements_pub_.publish(array);
     }
